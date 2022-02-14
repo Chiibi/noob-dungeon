@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { createCharacterAnims } from '~/anims/CharacterAnims'
 import { createLizardAnims } from '~/anims/EnemyAnims'
+import Lizard from '~/enemies/Lizard'
 import { debugDraw } from '~/utils/debug'
 
 export default class MainScene extends Phaser.Scene {
@@ -33,18 +34,16 @@ export default class MainScene extends Phaser.Scene {
     this.faune.body.setSize(this.faune.width * 0.5, this.faune.height * 0.4)
     this.faune.body.setOffset(8, 16)
 
-    this.physics.add.collider(this.faune, wallsLayer)
-
     this.cameras.main.startFollow(this.faune, true)
 
-    const lizard = this.physics.add.sprite(
-      200,
-      128,
-      'lizard',
-      'lizard_m_idle_anim_f0.png'
-    )
+    const lizards = this.physics.add.group({
+      classType: Lizard,
+    })
 
-    lizard.anims.play('lizard-run')
+    lizards.get(256, 150, 'lizard')
+
+    this.physics.add.collider(this.faune, wallsLayer)
+    this.physics.add.collider(lizards, wallsLayer)
   }
 
   update(time: number, delta: number): void {
