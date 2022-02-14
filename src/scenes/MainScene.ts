@@ -1,4 +1,6 @@
 import Phaser from 'phaser'
+import { createCharacterAnims } from '~/anims/CharacterAnims'
+import { createLizardAnims } from '~/anims/EnemyAnims'
 import { debugDraw } from '~/utils/debug'
 
 export default class MainScene extends Phaser.Scene {
@@ -14,6 +16,9 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
+    createLizardAnims(this.anims)
+    createCharacterAnims(this.anims)
+
     const map = this.make.tilemap({ key: 'dungeon' })
     const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16)
 
@@ -28,60 +33,18 @@ export default class MainScene extends Phaser.Scene {
     this.faune.body.setSize(this.faune.width * 0.5, this.faune.height * 0.4)
     this.faune.body.setOffset(8, 16)
 
-    this.anims.create({
-      key: 'faune-idle-down',
-      frames: [{ key: 'faune', frame: 'walk-down-3.png' }],
-    })
-
-    this.anims.create({
-      key: 'faune-idle-up',
-      frames: [{ key: 'faune', frame: 'walk-up-3.png' }],
-    })
-
-    this.anims.create({
-      key: 'faune-idle-side',
-      frames: [{ key: 'faune', frame: 'walk-side-3.png' }],
-    })
-
-    this.anims.create({
-      key: 'faune-run-down',
-      frames: this.anims.generateFrameNames('faune', {
-        start: 1,
-        end: 8,
-        prefix: 'run-down-',
-        suffix: '.png',
-      }),
-      repeat: -1,
-      frameRate: 15,
-    })
-
-    this.anims.create({
-      key: 'faune-run-up',
-      frames: this.anims.generateFrameNames('faune', {
-        start: 1,
-        end: 8,
-        prefix: 'run-up-',
-        suffix: '.png',
-      }),
-      repeat: -1,
-      frameRate: 15,
-    })
-
-    this.anims.create({
-      key: 'faune-run-side',
-      frames: this.anims.generateFrameNames('faune', {
-        start: 1,
-        end: 8,
-        prefix: 'run-side-',
-        suffix: '.png',
-      }),
-      repeat: -1,
-      frameRate: 15,
-    })
-
     this.physics.add.collider(this.faune, wallsLayer)
 
     this.cameras.main.startFollow(this.faune, true)
+
+    const lizard = this.physics.add.sprite(
+      200,
+      128,
+      'lizard',
+      'lizard_m_idle_anim_f0.png'
+    )
+
+    lizard.anims.play('lizard-run')
   }
 
   update(time: number, delta: number): void {
