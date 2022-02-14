@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 
+import Preload from './scenes/Preload'
 import MainScene from './scenes/MainScene'
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -12,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
       gravity: { y: 200 },
     },
   },
-  scene: [MainScene],
+  scene: [Preload, MainScene],
 }
 
 export default new Phaser.Game(config)
