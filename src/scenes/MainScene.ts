@@ -38,6 +38,10 @@ export default class MainScene extends Phaser.Scene {
 
     const lizards = this.physics.add.group({
       classType: Lizard,
+      createCallback: (go) => {
+        const LizardGo = go as Lizard
+        LizardGo.body.onCollide = true
+      },
     })
 
     lizards.get(256, 150, 'lizard')
