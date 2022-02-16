@@ -56,6 +56,7 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
     tile: Phaser.Tilemaps.Tile
   ) {
     if (go !== this) return
+    this.direction = randomDirection(this.direction)
   }
 
   protected preUpdate(time: number, delta: number): void {
