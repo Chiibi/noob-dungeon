@@ -20,22 +20,12 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
   private direction = Phaser.Math.Between(0, 3)
   private moveEvent: Phaser.Time.TimerEvent
 
-  constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    texture: string,
-    frame?: string
-  ) {
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
 
     this.anims.play('lizard-idle')
 
-    scene.physics.world.on(
-      Phaser.Physics.Arcade.Events.TILE_COLLIDE,
-      this.handleTileCollision,
-      this
-    )
+    scene.physics.world.on(Phaser.Physics.Arcade.Events.TILE_COLLIDE, this.handleTileCollision, this)
 
     this.moveEvent = scene.time.addEvent({
       delay: 2000,
@@ -51,10 +41,7 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
     super.destroy(fromScene)
   }
 
-  private handleTileCollision(
-    go: Phaser.GameObjects.GameObject,
-    tile: Phaser.Tilemaps.Tile
-  ) {
+  private handleTileCollision(go: Phaser.GameObjects.GameObject, tile: Phaser.Tilemaps.Tile) {
     if (go !== this) return
     this.direction = randomDirection(this.direction)
   }
