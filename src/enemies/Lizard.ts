@@ -59,9 +59,13 @@ export default class Lizard extends Phaser.Physics.Arcade.Sprite {
         this.setVelocity(0, speed)
         break
       case Direction.LEFT:
+        this.setScale(-1, 1)
+        this.body.offset.x = 16
         this.setVelocity(-speed, 0)
         break
       case Direction.RIGHT:
+        this.setScale(1, 1)
+        this.body.offset.x = 0
         this.setVelocity(speed, 0)
         break
 
