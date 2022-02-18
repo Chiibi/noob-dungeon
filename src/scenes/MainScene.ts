@@ -5,6 +5,7 @@ import Lizard from '~/enemies/Lizard'
 import { debugDraw } from '~/utils/debug'
 import '~/characters/Faune'
 import Faune from '~/characters/Faune'
+import { sceneEvents } from '~/events/EventCenter'
 
 export default class MainScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -19,6 +20,8 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
+    this.scene.run('game-ui')
+
     createLizardAnims(this.anims)
     createCharacterAnims(this.anims)
 
@@ -56,6 +59,8 @@ export default class MainScene extends Phaser.Scene {
     const dy = this.faune.y - lizard.y
 
     this.faune.handleDamage(new Phaser.Math.Vector2(dx, dy).normalize().scale(200))
+
+    sceneEvents.emit('player-health-changed', this.faune.health)
   }
 
   update(time: number, delta: number): void {
