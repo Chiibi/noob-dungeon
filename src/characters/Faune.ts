@@ -18,6 +18,7 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
   private healthState = HealthState.IDLE
   private damageTime = 0
   private _health = 3
+  private _knives?: Phaser.Physics.Arcade.Group
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -45,6 +46,10 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (!cursors) {
+      return
+    }
+    if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+      this.throwKnife()
       return
     }
 
@@ -77,6 +82,44 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  private throwKnife() {
+    if (!this._knives) return
+
+    const parts = this.anims.currentAnim?.key.split('-')
+    const direction = parts[2]
+
+    const vec = new Phaser.Math.Vector2(0, 0)
+    switch (direction) {
+      case 'up':
+        vec.y = -1
+        break
+      case 'down':
+        vec.y = 1
+        break
+      default:
+      case 'side':
+        if (this.scaleX < 0) vec.x = -1
+        else vec.x = 1
+        break
+    }
+
+    const angle = vec.angle()
+    const knife = this._knives?.get(this.x, this.y, 'knife') as Phaser.Physics.Arcade.Image
+
+    if (direction !== 'side') {
+      knife.body.setSize(knife.height, knife.width)
+    } else {
+      knife.body.setSize(knife.width, knife.height)
+      knife.body
+    }
+    knife.x += vec.x * 16
+    knife.y += vec.y * 16
+    knife.setActive(true)
+    knife.setVisible(true)
+    knife.setRotation(angle)
+    knife.setVelocity(vec.x * 270, vec.y * 270)
+  }
+
   handleDamage(dir: Phaser.Math.Vector2) {
     if (this._health <= 0) {
       return
@@ -101,6 +144,10 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       this.healthState = HealthState.DAMAGE
       this.damageTime = 0
     }
+  }
+
+  setKnives(knives: Phaser.Physics.Arcade.Group) {
+    this._knives = knives
   }
 
   get health() {
