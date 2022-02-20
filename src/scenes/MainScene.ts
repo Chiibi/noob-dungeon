@@ -6,6 +6,7 @@ import { debugDraw } from '~/utils/debug'
 import '~/characters/Faune'
 import Faune from '~/characters/Faune'
 import { sceneEvents } from '~/events/EventCenter'
+import { createChestAnims } from '~/anims/TreasureAnims'
 
 export default class MainScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -28,11 +29,19 @@ export default class MainScene extends Phaser.Scene {
 
     createLizardAnims(this.anims)
     createCharacterAnims(this.anims)
+    createChestAnims(this.anims)
 
     const map = this.make.tilemap({ key: 'dungeon' })
     const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16)
 
     map.createLayer('Ground', tileset)
+
+    const chest = this.add.sprite(64, 64, 'treasure', 'chest_empty_open_anim_f0.png')
+
+    // Test chest open anims
+    // this.time.delayedCall(1000, () => {
+    //   chest.play('chest-open')
+    // })
 
     this.knives = this.physics.add.group({
       classType: Phaser.Physics.Arcade.Image,
