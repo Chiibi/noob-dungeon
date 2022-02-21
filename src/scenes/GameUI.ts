@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
-import { Event } from '~/events/Event'
-import { sceneEvents } from '~/events/EventCenter'
+import { Event } from '../events/Event'
+import { sceneEvents } from '../events/EventCenter'
 
 export default class GameUI extends Phaser.Scene {
   private _hearts!: Phaser.GameObjects.Group

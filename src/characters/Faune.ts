@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
-import { Event } from '~/events/Event'
-import { sceneEvents } from '~/events/EventCenter'
-import Chest from '~/items/Chests'
+import { Event } from '../events/Event'
+import { sceneEvents } from '../events/EventCenter'
+import Chest from '../items/Chests'
 
 declare global {
   namespace Phaser.GameObjects {
