@@ -36,13 +36,6 @@ export default class MainScene extends Phaser.Scene {
 
     map.createLayer('Ground', tileset)
 
-    const chest = this.add.sprite(64, 64, 'treasure', 'chest_empty_open_anim_f0.png')
-
-    // Test chest open anims
-    // this.time.delayedCall(1000, () => {
-    //   chest.play('chest-open')
-    // })
-
     this.knives = this.physics.add.group({
       classType: Phaser.Physics.Arcade.Image,
     })
@@ -51,9 +44,18 @@ export default class MainScene extends Phaser.Scene {
 
     wallsLayer.setCollisionByProperty({ collides: true })
 
-    // debugDraw(wallsLayer, this)
+    const chests = this.physics.add.staticGroup({
+      classType: Chest,
+    })
+    const chestsLayer = map.getObjectLayer('Chests')
+    chestsLayer.objects.forEach((obj) => {
+      chests.get(obj.x! + obj.width! / 2, obj.y! - obj.height! / 2, 'treasure')
+    })
+
     this.faune = this.add.faune(128, 128, 'faune', 'walk-down-3.png')
     this.faune.setKnives(this.knives)
+
+    map.createLayer('WallsEdge', tileset)
 
     this.cameras.main.startFollow(this.faune, true)
 
@@ -69,8 +71,9 @@ export default class MainScene extends Phaser.Scene {
 
     this.physics.add.collider(this.faune, wallsLayer)
     this.physics.add.collider(this.lizards, wallsLayer)
-    this.physics.add.collider(this.knives, wallsLayer, this.handleKnifeWallCollision, undefined, this)
+    this.physics.add.collider(this.knives, wallsLayer, this.handleKnifeImmortalObjCollision, undefined, this)
     this.physics.add.collider(this.knives, this.lizards, this.handleKnifeLizardCollision, undefined, this)
+    this.physics.add.collider(this.knives, chests, this.handleKnifeImmortalObjCollision, undefined, this)
 
     this._playerLizardsCollider = this.physics.add.collider(
       this.lizards,
@@ -99,7 +102,7 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  private handleKnifeWallCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+  private handleKnifeImmortalObjCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
     this.knives.killAndHide(obj1)
   }
 
