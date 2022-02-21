@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { Event } from '~/events/Event'
 
 declare global {
   namespace Phaser.GameObjects {

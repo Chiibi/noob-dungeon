@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { Event } from '~/events/Event'
 import { sceneEvents } from '~/events/EventCenter'
 
 export default class GameUI extends Phaser.Scene {
@@ -23,10 +24,10 @@ export default class GameUI extends Phaser.Scene {
       quantity: 3,
     })
 
-    sceneEvents.on('player-health-changed', this.handlePlayerHealthChanged, this)
+    sceneEvents.on(Event.PLAYER_HP_CHANGED, this.handlePlayerHealthChanged, this)
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      sceneEvents.off('player-health-changed', this.handlePlayerHealthChanged, this)
+      sceneEvents.off(Event.PLAYER_HP_CHANGED, this.handlePlayerHealthChanged, this)
     })
   }
 
