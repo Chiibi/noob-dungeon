@@ -7,6 +7,8 @@ import '~/characters/Faune'
 import Faune from '~/characters/Faune'
 import { sceneEvents } from '~/events/EventCenter'
 import { createChestAnims } from '~/anims/TreasureAnims'
+import Chest from '~/items/Chests'
+import { Event } from '~/events/Event'
 
 export default class MainScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -75,6 +77,8 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.collider(this.knives, this.lizards, this.handleKnifeLizardCollision, undefined, this)
     this.physics.add.collider(this.knives, chests, this.handleKnifeImmortalObjCollision, undefined, this)
 
+    this.physics.add.collider(this.faune, chests, this.handlePlayerChestCollision, undefined, this)
+
     this._playerLizardsCollider = this.physics.add.collider(
       this.lizards,
       this.faune,
@@ -88,6 +92,11 @@ export default class MainScene extends Phaser.Scene {
     if (this.faune) this.faune.update(this.cursors)
   }
 
+  private handlePlayerChestCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const chest = obj2 as Chest
+    this.faune.setChest(chest)
+  }
+
   private handlePlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
     const lizard = obj2 as Lizard
     const dx = this.faune.x - lizard.x
@@ -95,7 +104,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.faune.handleDamage(new Phaser.Math.Vector2(dx, dy).normalize().scale(200))
 
-    sceneEvents.emit('player-health-changed', this.faune.health)
+    sceneEvents.emit(Event.PLAYER_HP_CHANGED, this.faune.health)
 
     if (this.faune.health <= 0) {
       this._playerLizardsCollider?.destroy()

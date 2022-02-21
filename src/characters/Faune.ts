@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
 import { Event } from '~/events/Event'
+import { sceneEvents } from '~/events/EventCenter'
+import Chest from '~/items/Chests'
 
 declare global {
   namespace Phaser.GameObjects {
@@ -18,8 +20,12 @@ enum HealthState {
 export default class Faune extends Phaser.Physics.Arcade.Sprite {
   private healthState = HealthState.IDLE
   private damageTime = 0
+
   private _health = 3
+  private _coins = 0
+
   private _knives?: Phaser.Physics.Arcade.Group
+  private _activeChest?: Chest
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame)
@@ -50,26 +56,39 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       return
     }
     if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
-      this.throwKnife()
+      if (this._activeChest) {
+        const coins = this._activeChest.open()
+        this._coins += coins
+
+        sceneEvents.emit(Event.PLAYER_COINS_CHANGED, this._coins)
+      } else {
+        this.throwKnife()
+      }
+
       return
     }
 
     const speed = 100
 
-    if (cursors.left?.isDown) {
+    const leftDown = cursors.left?.isDown
+    const rightDown = cursors.right?.isDown
+    const upDown = cursors.up?.isDown
+    const downDown = cursors.down?.isDown
+
+    if (leftDown) {
       this.setScale(-1, 1)
       this.body.offset.x = 24
       this.setVelocity(-speed, 0)
       this.anims.play('faune-run-side', true)
-    } else if (cursors.right?.isDown) {
+    } else if (rightDown) {
       this.setScale(1, 1)
       this.body.offset.x = 8
       this.setVelocity(speed, 0)
       this.anims.play('faune-run-side', true)
-    } else if (cursors.up?.isDown) {
+    } else if (upDown) {
       this.setVelocity(0, -speed)
       this.anims.play('faune-run-up', true)
-    } else if (cursors.down?.isDown) {
+    } else if (downDown) {
       this.setVelocity(0, speed)
       this.anims.play('faune-run-down', true)
     } else {
@@ -80,6 +99,10 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
       }
 
       this.setVelocity(0, 0)
+    }
+
+    if (leftDown || rightDown || upDown || downDown) {
+      this._activeChest = undefined
     }
   }
 
@@ -149,6 +172,10 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite {
 
   setKnives(knives: Phaser.Physics.Arcade.Group) {
     this._knives = knives
+  }
+
+  setChest(chest: Chest) {
+    this._activeChest = chest
   }
 
   get health() {
