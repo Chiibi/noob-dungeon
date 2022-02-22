@@ -112,11 +112,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   private handleKnifeImmortalObjCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
-    this.knives.killAndHide(obj1)
+    this.knives.remove(obj1, false, true)
   }
 
   private handleKnifeLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
-    this.knives.killAndHide(obj1)
-    this.lizards.killAndHide(obj2)
+    this.knives.remove(obj1, false, true)
+    this.lizards.remove(obj2, false, true)
   }
 }
