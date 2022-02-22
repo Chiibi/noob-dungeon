@@ -11,10 +11,13 @@ export default class GameUI extends Phaser.Scene {
   }
 
   create() {
-    const coinsLabel = this.add.text(5, 20, '0')
+    this.add.image(6, 26, 'treasure', 'coin_anim_f0.png')
+    const coinsLabel = this.add.text(14, 21, '0', {
+      fontSize: '14',
+    })
 
     sceneEvents.on(Event.PLAYER_COINS_CHANGED, (coins: number) => {
-      coinsLabel.text = coins.toString()
+      coinsLabel.text = coins.toLocaleString()
     })
 
     this._hearts = this.add.group({
